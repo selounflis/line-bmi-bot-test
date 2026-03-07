@@ -1,14 +1,14 @@
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageMessage
 from PIL import Image, ImageOps
 import numpy as np
 import os
 import tensorflow as tf
 app = Flask(__name__)
-line_bot_api = LineBotApi(os.getenv("kQB6gGfE4DGid3mNVLHB6K2UR33amzeY/HVmKPzNCR6O8Zvy1OBHehpRjMDIfh0rHFqWTla6zTucQm226FAt6/vhTXqVuUxa/1Ebpjoq7T4TZqu57mV5su2b/r4wC2YNSpmJI0a0Y2uTJQ11nLJw0gdB04t89/1O/w1cDnyilFU="))
-handler = WebhookHandler(os.getenv("4d635c6839b20911f6d904274eb908c6"))
+line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
+handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 model = tf.keras.models.load_model("keras_model.h5")
 labels = open("labels.txt", "r").readlines()
 @app.route("/callback", methods=['POST'])
@@ -37,7 +37,7 @@ def handler_text_message(event):
                  advice = "ค่า BMI ของคุณอยู่ในเกณฑ์ปกตินะคะ รักษามาตรฐานนี้ไว้นะคะ"
              else:
                  advice = "ค่า BMI ของคุณสูงกว่าเกณฑ์นะคะ ควรเลี่ยงของทอดและของหวาน แนะนำอาหารที่ควรทาน เช่น ข้าวกับต้มจืด เนื่องจากเมนูนี้ให้พลังงานพอดีและเป็นอาหารไขมันต่ำค่ะ"
-             line_bot_api.reply_message(event.reply_token, TextSendMessage(Text=result+advice))
+             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=result+advice))
          except:
              line_bot_api.reply_message(event.reply_token, TextSendMessage(text="กรุณาพิมพ์ในรูปแบบ: น้ำหนัก 70 ส่วนสูง 170"))
 @handler.add(MessageEvent, message=ImageMessage)
@@ -57,11 +57,11 @@ def handle_image_message(event):
     index = np.argmax(prediction)
     food_name = labels[index].strip()
     calories_db = {
-         "ก๋วยเตี๋ยว": 330-350, 
-         "ข้าวมันไก่ต้ม": 539-619, 
-         "ข้าวมันไก่ทอด": 693-800, 
-         "ข้าวกะเพรา": 580-630, 
-         "ข้าวต้ม": 200-300
+         "ก๋วยเตี๋ยว": "330-350", 
+         "ข้าวมันไก่ต้ม": "539-619", 
+         "ข้าวมันไก่ทอด": "693-800", 
+         "ข้าวกะเพรา": "580-630", 
+         "ข้าวต้ม": "200-300"
     }
     display_name = food_name.split(' ',1)[-1] if ' ' in food_name else food_name
     cal = calories_db.get(food_name, "ไม่ทราบข้อมูล")
