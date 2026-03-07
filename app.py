@@ -7,8 +7,8 @@ import numpy as np
 import os
 import tensorflow as tf
 app = Flask(__name__)
-line_bot_api = LineBotApi(os.getenv("kQB6gGfE4DGid3mNVLHB6K2UR33amzeY/HVmKPzNCR6O8Zvy1OBHehpRjMDIfh0rHFqWTla6zTucQm226FAt6/vhTXqVuUxa/1Ebpjoq7T4TZqu57mV5su2b/r4wC2YNSpmJI0a0Y2uTJQ11nLJw0gdB04t89/1O/w1cDnyilFU="))
-handler = WebhookHandler(os.getenv("4d635c6839b20911f6d904274eb908c6"))
+line_bot_api = LineBotApi("kQB6gGfE4DGid3mNVLHB6K2UR33amzeY/HVmKPzNCR6O8Zvy1OBHehpRjMDIfh0rHFqWTla6zTucQm226FAt6/vhTXqVuUxa/1Ebpjoq7T4TZqu57mV5su2b/r4wC2YNSpmJI0a0Y2uTJQ11nLJw0gdB04t89/1O/w1cDnyilFU=")
+handler = WebhookHandler("4d635c6839b20911f6d904274eb908c6")
 model = tf.keras.models.load_model("keras_model.h5")
 labels = open("labels.txt", "r").readlines()
 @app.route("/callback", methods=['POST'])
