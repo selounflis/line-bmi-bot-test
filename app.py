@@ -10,7 +10,8 @@ app = Flask(__name__)
 line_bot_api = LineBotApi("kQB6gGfE4DGid3mNVLHB6K2UR33amzeY/HVmKPzNCR6O8Zvy1OBHehpRjMDIfh0rHFqWTla6zTucQm226FAt6/vhTXqVuUxa/1Ebpjoq7T4TZqu57mV5su2b/r4wC2YNSpmJI0a0Y2uTJQ11nLJw0gdB04t89/1O/w1cDnyilFU=")
 handler = WebhookHandler("4d635c6839b20911f6d904274eb908c6")
 model = tf.keras.models.load_model("keras_model.h5")
-labels = open("labels.txt", "r").readlines()
+with open("labels.txt", "r", encoding="utf-8") as f:
+    labels = [line.strip() for line in f.readlines()]
 @app.route("/callback", methods=['POST'])
 def callback():
     signature = request.headers['x-line-signature']
@@ -42,6 +43,7 @@ def handler_text_message(event):
              line_bot_api.reply_message(event.reply_token, TextSendMessage(text="กรุณาพิมพ์ในรูปแบบ: น้ำหนัก 70 ส่วนสูง 170"))
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image_message(event):
+    image = Image.open("temp_image.jpg").convert("RGB")
     message_content = line_bot_api.get_message_content(event.message.id)
     with open("temp_image.jpg", "wb") as f:
         for chunk in message_content.iter_content():
