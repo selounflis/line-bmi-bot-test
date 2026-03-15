@@ -2,5 +2,5 @@ flask
 tensorflow
 numpy
 pillow
-line-bot-sdk
-gunicorn
+line-bot-sdk==2.4.2
+gunicor
